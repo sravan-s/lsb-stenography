@@ -33,6 +33,9 @@ executable lsb-stenography
     -- other-extensions:
     build-depends:
       base ^>=4.16.4.0,
-      cmdargs ^>=0.10.22
+      cmdargs ^>=0.10.22,
+      crypton ^>=0.33,
+      memory ^>=0.18.0,
+      bytestring ^>=0.12.0.2,
     hs-source-dirs:   app
     default-language: Haskell2010

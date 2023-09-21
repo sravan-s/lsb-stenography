@@ -14,14 +14,17 @@ a. Encode mode
 b. Decode Mode
   imageToDecode :: FilePath
   decodekey :: String
+  output :: FilePath
 ```
 
 ## How to run?
 
 ```
 $ git clone
-cabal run . -- --textInput="./samples/text.txt" --imageToEncode="./samples/image.jpg" outputImage="./samples/outputImage.jpg" encodekey="MY_KEY"
-cabal run . -- --imageToDecode="./samples/outputImage.jpg" --decodekey="MY_KEY"
+
+cabal run . -- encodeargs --textinput="./samples/text.txt" --imagetoencode="./samples/image.jpg" --outputimage="./samples/outputImage.jpg" --encodekey="MY_KEY"
+
+cabal run . -- decodeargs --imagetodecode="./samples/outputImage.jpg" --decodekey="MY_KEY" --output="output.txt" 
 ```
 
 
