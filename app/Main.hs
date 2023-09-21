@@ -42,49 +42,50 @@ hexToByteString hex = case convertFromBase Base16 (BS.pack $ map (fromIntegral .
   (Right bs) -> bs
 
 -- Your provided key and nonce as hexadecimal strings
-yourHexKey :: String
-yourHexKey = "0123456789abcdef0123456789abcdef"  -- Replace with your 32-character hex key
+keyToBS :: String -> BS.ByteString
+keyToBS = hexToByteString
 
-yourHexNonce :: String
-yourHexNonce = "0123456789abcdef0123456789abcdef"  -- Replace with your 16-character hex nonce
-
-defaultKey :: BS.ByteString
-defaultKey = hexToByteString yourHexKey
-
-defaultNonce :: IV AES128
-defaultNonce = case makeIV $ hexToByteString yourHexNonce of
+nonceToIv :: String -> IV AES128
+nonceToIv nonce = case makeIV $ hexToByteString nonce of
   Nothing -> error "Invalid nonce"
   Just iv -> iv
 
-encryptMessage :: BS.ByteString -> BS.ByteString
-encryptMessage plaintext = do
-  let cipher = throwCryptoError $ cipherInit defaultKey :: AES128
-  let ciphertext = ctrCombine cipher defaultNonce plaintext
+encryptMessage :: BS.ByteString -> BS.ByteString -> IV AES128 -> BS.ByteString
+encryptMessage plaintext key nonce  = do
+  let cipher = throwCryptoError $ cipherInit key :: AES128
+  let ciphertext = ctrCombine cipher nonce plaintext
   ciphertext
 
-decryptMessage :: BS.ByteString -> BS.ByteString
-decryptMessage ciphertext = do
-  let cipher = throwCryptoError $ cipherInit defaultKey :: AES128
-  let plaintext = ctrCombine cipher defaultNonce ciphertext
+decryptMessage :: BS.ByteString -> BS.ByteString -> IV AES128 -> BS.ByteString
+decryptMessage ciphertext key nonce = do
+  let cipher = throwCryptoError $ cipherInit key :: AES128
+  let plaintext = ctrCombine cipher nonce ciphertext
   plaintext
 
 stringToEncodedAscii :: String -> [Int]
 stringToEncodedAscii = map fromEnum 
 
-encode :: FilePath -> FilePath -> FilePath -> String -> IO ()
-encode text image output key = do
-  print "encoding... \n"
-  print text
-  print image
-  print output
+parseAuthFile :: FilePath -> IO (BS.ByteString, IV AES128)
+parseAuthFile path = do
+  contents <- readFile path
+  let [_, key, nonce] = lines contents
   print key
+  print nonce
+  let key' = hexToByteString key
+  let nonce' = case makeIV $ hexToByteString nonce of
+        Nothing -> error ("Invalid nonce, expect a 32 char string, but provided" ++ nonce)
+        Just iv -> iv
+  return (key', nonce')
+
+encode :: FilePath -> FilePath -> FilePath -> String -> IO ()
+encode text image output authPath = do
+  print "encoding... \n"
+  (key, iv) <- parseAuthFile authPath
+  print (encryptMessage "Hello world" key iv)
 
 decode :: FilePath -> FilePath -> String -> IO ()
 decode image output key = do
   print "decoding... \n"
-  print image
-  print output
-  print key
 
 main :: IO ()
 main = do
@@ -94,6 +95,5 @@ main = do
       encode t i o k
     DecodeArgs { imageToDecode = i, authFile = k, output = o } -> do
       decode i o k
-  print (encryptMessage "Hello, World!")
-  print (decryptMessage $ encryptMessage "Hello, World!")
   print "finished"
+

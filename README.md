@@ -22,9 +22,11 @@ b. Decode Mode
 ```
 $ git clone
 
-cabal run . -- encodeargs --textinput="./samples/text.txt" --imagetoencode="./samples/image.jpg" --outputimage="./samples/outputImage.jpg" --authfile="MY_KEY"
+-- copy authfile.example to .authfile and fill necessary fields
 
-cabal run . -- decodeargs --imagetodecode="./samples/outputImage.jpg" --authfile="MY_KEY" --output="output.txt" 
+cabal run . -- encodeargs --textinput="./samples/text.txt" --imagetoencode="./samples/image.jpg" --outputimage="./samples/outputImage.jpg" --authfile="./samples/.authfile"
+
+cabal run . -- decodeargs --imagetodecode="./samples/outputImage.jpg" --authfile="./samples/.authfile" --output="output.txt" 
 ```
 
 
