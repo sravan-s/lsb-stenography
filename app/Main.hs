@@ -16,10 +16,10 @@ data Args = EncodeArgs {
   textInput :: FilePath
   , imageToEncode :: FilePath
   , outputImage :: FilePath
-  , encodeKey :: String
+  , authFile :: FilePath
 } | DecodeArgs {
   imageToDecode :: FilePath
-  , decodeKey :: String
+  , authFile :: FilePath
   , output :: FilePath
 } deriving (Show, Data, Typeable)
 
@@ -27,12 +27,12 @@ encodeArgs = EncodeArgs{
   textInput = def &= typFile &= help "Path to text file to encode"
   , imageToEncode = def &= typFile &= help "Path to image to encode"
   , outputImage = def &= typFile &= help "Path to output image"
-  , encodeKey = def &= typ "KEY" &= help "Key to encode with"
+  , authFile = def &= typ "KEY" &= help "Path to your auth file, see auth.example in samples"
 }
 
 decodeArgs = DecodeArgs {
   imageToDecode = def &= typFile &= help "Path to image to decode"
-  , decodeKey = def &= typ "KEY" &= help "Key to decode with"
+  , authFile = def &= typ "KEY" &= help "Path to your auth file, see auth.example in samples"
   , output = def &= typFile &= help "Path to output file"
 }
 
@@ -90,9 +90,9 @@ main :: IO ()
 main = do
   commands <- cmdArgs (modes [encodeArgs, decodeArgs])
   case commands of
-    EncodeArgs { textInput = t, imageToEncode = i, outputImage = o, encodeKey = k } -> do
+    EncodeArgs { textInput = t, imageToEncode = i, outputImage = o, authFile = k } -> do
       encode t i o k
-    DecodeArgs { imageToDecode = i, decodeKey = k, output = o } -> do
+    DecodeArgs { imageToDecode = i, authFile = k, output = o } -> do
       decode i o k
   print (encryptMessage "Hello, World!")
   print (decryptMessage $ encryptMessage "Hello, World!")

@@ -1,0 +1,3 @@
+type="AES128" -- This is default, no other options avaiable for now
+-- enter your 32 char hex key (line 2)
+-- enter your 16 char hex nonce (line 3)
