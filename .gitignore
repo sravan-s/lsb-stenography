@@ -17,6 +17,6 @@ cabal.sandbox.config
 *.eventlog
 .stack-work/
 cabal.project.local
-outputimage.jpg
+outputImage.jpg
 output.txt
 .authfile

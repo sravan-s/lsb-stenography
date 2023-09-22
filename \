@@ -13,7 +13,6 @@ import qualified Data.ByteArray as BA
 import Data.Word
 import Data.ByteArray.Encoding (convertFromBase, Base(Base16))
 import Codec.Picture
-import qualified Data.Vector.Storable as V
 
 data Args = EncodeArgs {
   textInput :: FilePath
@@ -99,12 +98,6 @@ encode text image output authPath = do
       in savePngImage output (ImageRGBA8 processedImage)
   print ("finished encoding, see: " ++ output)
 
-
-toPixels :: [Word8] -> [PixelRGBA8]
-toPixels [] = []
-toPixels (r:g:b:a:rest) = PixelRGBA8 r g b a : toPixels rest
-toPixels _ = error "Incomplete pixel data"
-
 decode :: FilePath -> FilePath -> String -> IO ()
 decode image output key = do
   print "decoding... \n"
@@ -113,16 +106,10 @@ decode image output key = do
   imgResult <- readImage image
   case imgResult of
     Left err -> putStrLn ("Error loading image: " ++ err)
-    Right dynamicImage -> do
-      let img = convertRGBA8 dynamicImage
-          -- extract data from image
-          pixelList = toPixels $ V.toList(imageData img)
-          encryptedByteList = map (\(PixelRGBA8 _ _ _ a) -> a) pixelList
-          encryptedMessage = BS.pack encryptedByteList
-          -- decrypt
-          plaintext = decryptMessage encryptedMessage key iv
-      -- write to output file
-      BS.writeFile output plaintext
+    Right dynamicImage ->
+      print ("image loaded \n")
+  -- decrypt
+  -- write to output file
   print ("decoded, see: " ++ output)
 
 main :: IO ()

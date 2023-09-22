@@ -36,6 +36,8 @@ executable lsb-stenography
       cmdargs ^>=0.10.22,
       crypton ^>=0.33,
       memory ^>=0.18.0,
-      bytestring ^>=0.12.0.2,
+      bytestring ^>=0.11.0.2,
+      JuicyPixels ^>=3.3.8,
+      vector ^>= 0.13
     hs-source-dirs:   app
     default-language: Haskell2010

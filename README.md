@@ -26,7 +26,7 @@ $ git clone
 
 cabal run . -- encodeargs --textinput="./samples/text.txt" --imagetoencode="./samples/image.jpg" --outputimage="./samples/outputImage.jpg" --authfile="./samples/.authfile"
 
-cabal run . -- decodeargs --imagetodecode="./samples/outputImage.jpg" --authfile="./samples/.authfile" --output="output.txt" 
+cabal run . -- decodeargs --imagetodecode="./samples/outputImage.jpg" --authfile="./samples/.authfile" --output="./samples/output.txt"
 ```
 
 
